@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { judul, penulis, penerbit, tahunTerbit, isbn, kategori, jumlah, deskripsi } = body
+    const { judul, penulis, penerbit, tahunTerbit, isbn, kategori, jumlah, deskripsi, gambar } = body
 
     if (!judul || !penulis || !penerbit || !tahunTerbit || !kategori || jumlah === undefined) {
       return NextResponse.json(
@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
         kategori,
         jumlah: parseInt(jumlah),
         deskripsi,
+        gambar: gambar || null,
       },
     })
 

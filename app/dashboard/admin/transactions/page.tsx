@@ -24,6 +24,8 @@ export default function TransactionsPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
 
   useEffect(() => {
     fetchTransactions()
@@ -31,6 +33,7 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     filterTransactions()
+    setCurrentPage(1)
   }, [search, statusFilter, transactions])
 
   const fetchTransactions = async () => {
@@ -119,6 +122,12 @@ export default function TransactionsPage() {
     return status === 'DIPINJAM' && new Date(batasKembali) < new Date()
   }
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex)
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -165,121 +174,160 @@ export default function TransactionsPage() {
                 Tidak ada transaksi
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredTransactions.map((transaction) => {
-                  const statusColor = getStatusColor(transaction.status)
-                  const overdue = isOverdue(transaction.batasKembali, transaction.status)
-                  
-                  return (
-                    <Card key={transaction.id} className="hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <CardTitle className="text-lg">
-                              {transaction.book.judul}
-                            </CardTitle>
-                            <div className="flex items-center mt-2 space-x-2">
-                              <User className="w-4 h-4 text-muted-foreground" />
-                              <p className="text-sm text-muted-foreground">
-                                {transaction.user.nama}
-                              </p>
-                            </div>
-                          </div>
-                          <div 
-                            className="p-2 rounded-lg"
-                            style={{ backgroundColor: statusColor.bg }}
-                          >
-                            <BookCheck 
-                              className="w-5 h-5" 
-                              style={{ color: statusColor.text }}
-                            />
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <div>
-                              <p className="font-medium">Tanggal Pinjam:</p>
-                              <p className="text-muted-foreground">
-                                {new Date(transaction.tanggalPinjam).toLocaleDateString('id-ID')}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <div>
-                              <p className="font-medium">Batas Kembali:</p>
-                              <div className="flex items-center space-x-2">
-                                <p className="text-muted-foreground">
-                                  {new Date(transaction.batasKembali).toLocaleDateString('id-ID')}
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginatedTransactions.map((transaction) => {
+                    const statusColor = getStatusColor(transaction.status)
+                    const overdue = isOverdue(transaction.batasKembali, transaction.status)
+                    
+                    return (
+                      <Card key={transaction.id} className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-lg">
+                                {transaction.book.judul}
+                              </CardTitle>
+                              <div className="flex items-center mt-2 space-x-2">
+                                <User className="w-4 h-4 text-muted-foreground" />
+                                <p className="text-sm text-muted-foreground">
+                                  {transaction.user.nama}
                                 </p>
-                                {overdue && (
-                                  <AlertCircle className="w-4 h-4" style={{ color: '#EF4444' }} />
-                                )}
                               </div>
                             </div>
+                            <div 
+                              className="p-2 rounded-lg"
+                              style={{ backgroundColor: statusColor.bg }}
+                            >
+                              <BookCheck 
+                                className="w-5 h-5" 
+                                style={{ color: statusColor.text }}
+                              />
+                            </div>
                           </div>
-                          {transaction.tanggalKembali && (
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="space-y-2 text-sm">
                             <div className="flex items-center space-x-2">
                               <Calendar className="w-4 h-4 text-muted-foreground" />
                               <div>
-                                <p className="font-medium">Tanggal Kembali:</p>
+                                <p className="font-medium">Tanggal Pinjam:</p>
                                 <p className="text-muted-foreground">
-                                  {new Date(transaction.tanggalKembali).toLocaleDateString('id-ID')}
+                                  {new Date(transaction.tanggalPinjam).toLocaleDateString('id-ID')}
                                 </p>
                               </div>
                             </div>
-                          )}
-                          {transaction.denda > 0 && (
-                            <div>
-                              <p className="font-medium">Denda:</p>
-                              <p className="text-sm" style={{ color: '#EF4444' }}>
-                                Rp {transaction.denda.toLocaleString('id-ID')}
-                              </p>
+                            <div className="flex items-center space-x-2">
+                              <Calendar className="w-4 h-4 text-muted-foreground" />
+                              <div>
+                                <p className="font-medium">Batas Kembali:</p>
+                                <div className="flex items-center space-x-2">
+                                  <p className="text-muted-foreground">
+                                    {new Date(transaction.batasKembali).toLocaleDateString('id-ID')}
+                                  </p>
+                                  {overdue && (
+                                    <AlertCircle className="w-4 h-4" style={{ color: '#EF4444' }} />
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span
-                            className="px-3 py-1 rounded-full text-xs font-medium"
-                            style={{ 
-                              backgroundColor: statusColor.bg + '20',
-                              color: statusColor.text
-                            }}
-                          >
-                            {transaction.status}
-                          </span>
-                        </div>
-                        <div className="flex space-x-2 pt-2 border-t">
-                          {transaction.status === 'DIPINJAM' && (
+                            {transaction.tanggalKembali && (
+                              <div className="flex items-center space-x-2">
+                                <Calendar className="w-4 h-4 text-muted-foreground" />
+                                <div>
+                                  <p className="font-medium">Tanggal Kembali:</p>
+                                  <p className="text-muted-foreground">
+                                    {new Date(transaction.tanggalKembali).toLocaleDateString('id-ID')}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                            {transaction.denda > 0 && (
+                              <div>
+                                <p className="font-medium">Denda:</p>
+                                <p className="text-sm" style={{ color: '#EF4444' }}>
+                                  Rp {transaction.denda.toLocaleString('id-ID')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span
+                              className="px-3 py-1 rounded-full text-xs font-medium"
+                              style={{ 
+                                backgroundColor: statusColor.bg + '20',
+                                color: statusColor.text
+                              }}
+                            >
+                              {transaction.status}
+                            </span>
+                          </div>
+                          <div className="flex space-x-2 pt-2 border-t">
+                            {transaction.status === 'DIPINJAM' && (
+                              <Button
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() =>
+                                  handleUpdateStatus(transaction.id, 'DIKEMBALIKAN')
+                                }
+                                style={{ borderColor: '#22C55E', color: '#22C55E' }}
+                              >
+                                <BookCheck className="w-4 h-4 mr-2" />
+                                Kembalikan
+                              </Button>
+                            )}
                             <Button
                               variant="outline"
-                              className="flex-1"
-                              onClick={() =>
-                                handleUpdateStatus(transaction.id, 'DIKEMBALIKAN')
-                              }
-                              style={{ borderColor: '#22C55E', color: '#22C55E' }}
+                              size="sm"
+                              onClick={() => handleDelete(transaction.id)}
+                              style={{ borderColor: '#EF4444', color: '#EF4444' }}
                             >
-                              <BookCheck className="w-4 h-4 mr-2" />
-                              Kembalikan
+                              <Trash2 className="w-4 h-4" />
                             </Button>
-                          )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete(transaction.id)}
-                            style={{ borderColor: '#EF4444', color: '#EF4444' }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )
-                })}
-              </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex items-center justify-center space-x-2 mt-8 pt-6 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Sebelumnya
+                  </Button>
+                  
+                  <div className="flex space-x-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        onClick={() => setCurrentPage(page)}
+                        className="w-10 h-10"
+                        style={currentPage === page ? { backgroundColor: '#1A3D64', color: 'white' } : {}}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Selanjutnya
+                  </Button>
+
+                  <div className="ml-4 text-sm text-muted-foreground">
+                    Halaman {currentPage} dari {totalPages} (Total: {filteredTransactions.length})
+                  </div>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

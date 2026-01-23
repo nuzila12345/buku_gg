@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { BookOpen, LogOut, Users, BookCheck, LayoutDashboard, Menu, X } from 'lucide-react'
+import { BookOpen, LogOut, Users, BookCheck, LayoutDashboard, Menu, X, AlertCircle, TrendingUp, MessageSquare, QrCode } from 'lucide-react'
 
 interface User {
   id: string
@@ -56,13 +56,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: '/dashboard/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/dashboard/admin/books', label: 'Kelola Data Buku', icon: BookOpen },
     { href: '/dashboard/admin/transactions', label: 'Transaksi', icon: BookCheck },
+    { href: '/dashboard/admin/history', label: 'Riwayat Peminjaman', icon: BookCheck },
+    { href: '/dashboard/admin/denda', label: 'Denda', icon: AlertCircle },
     { href: '/dashboard/admin/members', label: 'Kelola Anggota', icon: Users },
+    { href: '/dashboard/admin/qrcode', label: 'QR Code', icon: QrCode },
   ]
 
   const siswaMenu = [
     { href: '/dashboard/siswa', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/dashboard/siswa/borrow', label: 'Peminjaman Buku', icon: BookOpen },
+    { href: '/dashboard/siswa/scan-qr', label: 'Scan QR Code', icon: QrCode },
+    { href: '/dashboard/siswa/history', label: 'Riwayat Peminjaman', icon: BookCheck },
     { href: '/dashboard/siswa/return', label: 'Pengembalian Buku', icon: BookCheck },
+    { href: '/dashboard/siswa/review', label: 'Review & Rating', icon: MessageSquare },
+    { href: '/dashboard/siswa/statistics', label: 'Statistik', icon: TrendingUp },
+    { href: '/dashboard/siswa/denda', label: 'Tracker Denda', icon: AlertCircle },
   ]
 
   const menuItems = isAdmin ? adminMenu : siswaMenu

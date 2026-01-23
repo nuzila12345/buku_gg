@@ -45,7 +45,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { judul, penulis, penerbit, tahunTerbit, isbn, kategori, jumlah, deskripsi } = body
+    const { judul, penulis, penerbit, tahunTerbit, isbn, kategori, jumlah, deskripsi, gambar } = body
 
     const book = await prisma.book.update({
       where: { id: params.id },
@@ -58,6 +58,7 @@ export async function PUT(
         kategori,
         jumlah: jumlah !== undefined ? parseInt(jumlah) : undefined,
         deskripsi,
+        gambar: gambar !== undefined ? gambar : undefined,
       },
     })
 

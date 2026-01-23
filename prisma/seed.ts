@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole, TransactionStatus } from '@prisma/client'
+import { PrismaClient, UserRole, TransactionStatus, DendaStatus } from '@prisma/client'
 import * as bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -173,15 +173,15 @@ async function main() {
     // Create past transaction (returned)
     const batasKembali1 = new Date()
     batasKembali1.setDate(batasKembali1.getDate() - 5)
-    const tanggalKembali1 = new Date()
-    tanggalKembali1.setDate(tanggalKembali1.getDate() - 2)
+    const tanggalKembaliTrx1 = new Date()
+    tanggalKembaliTrx1.setDate(tanggalKembaliTrx1.getDate() - 2)
 
-    await prisma.transaction.create({
+    const transaction1 = await prisma.transaction.create({
       data: {
         userId: siswa1.id,
         bookId: book1.id,
         tanggalPinjam: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-        tanggalKembali: tanggalKembali1,
+        tanggalKembali: tanggalKembaliTrx1,
         batasKembali: batasKembali1,
         status: TransactionStatus.DIKEMBALIKAN,
         denda: 0,
@@ -204,6 +204,101 @@ async function main() {
     })
 
     console.log('✅ Created transactions')
+
+    // Create denda data for late returns
+    // Denda 1: Belum Dibayar
+    const tanggalPinjam1 = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+    const tanggalJatuhTempo1 = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+    const tanggalKembali1 = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+    const jumlahHariTelat1 = 2
+    const totalDenda1 = jumlahHariTelat1 * 1000
+
+    const denda1 = await prisma.denda.upsert({
+      where: { transactionId: transaction1.id },
+      update: {},
+      create: {
+        transactionId: transaction1.id,
+        userId: siswa1.id,
+        bookId: book1.id,
+        tanggalPinjam: tanggalPinjam1,
+        tanggalJatuhTempo: tanggalJatuhTempo1,
+        tanggalKembali: tanggalKembali1,
+        jumlahHariTelat: jumlahHariTelat1,
+        dendaPerHari: 1000,
+        totalDenda: totalDenda1,
+        status: DendaStatus.BELUM_DIBAYAR,
+        tanggalDibayar: null,
+      },
+    })
+
+    console.log('✅ Created denda (belum dibayar):', denda1.id)
+
+    // Denda 2: Sudah Dibayar
+    const siswa3 = await prisma.user.upsert({
+      where: { username: 'siswa3' },
+      update: {},
+      create: {
+        username: 'siswa3',
+        password: hashedPassword,
+        role: UserRole.SISWA,
+        nama: 'Citra Dewi',
+        email: 'citra@example.com',
+        alamat: 'Jl. Siswa No. 3',
+        telepon: '081234567893',
+      },
+    })
+
+    const book3 = await prisma.book.upsert({
+      where: { isbn: 'ISBN-003' },
+      update: {},
+      create: {
+        judul: 'Refactoring',
+        penulis: 'Martin Fowler',
+        penerbit: 'Addison-Wesley',
+        tahunTerbit: 2018,
+        isbn: 'ISBN-003',
+        kategori: 'Pemrograman',
+        jumlah: 3,
+        deskripsi: 'Teknik refactoring untuk meningkatkan kualitas kode',
+      },
+    })
+
+    const batasKembali3 = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000)
+    const transaction3 = await prisma.transaction.create({
+      data: {
+        userId: siswa3.id,
+        bookId: book3.id,
+        tanggalPinjam: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        tanggalKembali: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        batasKembali: batasKembali3,
+        status: TransactionStatus.DIKEMBALIKAN,
+        denda: 7000,
+      },
+    })
+
+    const tanggalPinjam3 = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000)
+    const tanggalJatuhTempo3 = batasKembali3
+    const tanggalKembali3 = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+    const jumlahHariTelat3 = 7
+    const totalDenda3 = jumlahHariTelat3 * 1000
+
+    const denda2 = await prisma.denda.create({
+      data: {
+        transactionId: transaction3.id,
+        userId: siswa3.id,
+        bookId: book3.id,
+        tanggalPinjam: tanggalPinjam3,
+        tanggalJatuhTempo: tanggalJatuhTempo3,
+        tanggalKembali: tanggalKembali3,
+        jumlahHariTelat: jumlahHariTelat3,
+        dendaPerHari: 1000,
+        totalDenda: totalDenda3,
+        status: DendaStatus.SUDAH_DIBAYAR,
+        tanggalDibayar: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      },
+    })
+
+    console.log('✅ Created denda (sudah dibayar):', denda2.id)
   }
 
   console.log('🎉 Seed completed!')

@@ -21,6 +21,17 @@ enum TransactionStatus {
   TERLAMBAT
 }
 
+enum DendaStatus {
+  BELUM_DIBAYAR
+  SUDAH_DIBAYAR
+}
+
+enum PaymentMethod {
+  TRANSFER
+  CASH
+  CARD
+}
+
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
@@ -34,6 +45,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   transactions Transaction[]
+  dendaList    Denda[]
+  reviews      Review[]
 
   @@map("users")
 }
@@ -48,29 +61,72 @@ model Book {
   kategori    String
   jumlah      Int      @default(0)
   deskripsi   String?
+  gambar      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   transactions Transaction[]
+  dendaList    Denda[]
+  reviews      Review[]
 
   @@map("books")
 }
 
 model Transaction {
-  id            String            @id @default(uuid())
-  userId        String
-  bookId        String
-  tanggalPinjam DateTime          @default(now())
+  id             String            @id @default(uuid())
+  userId         String
+  bookId         String
+  tanggalPinjam  DateTime          @default(now())
   tanggalKembali DateTime?
-  batasKembali  DateTime
-  status        TransactionStatus @default(DIPINJAM)
-  denda         Float             @default(0)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  batasKembali   DateTime
+  status         TransactionStatus @default(DIPINJAM)
+  denda          Float             @default(0)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book        Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  dendaDetail Denda?
 
   @@map("transactions")
 }
 
+model Denda {
+  id                String      @id @default(uuid())
+  transactionId     String      @unique
+  userId            String
+  bookId            String
+  tanggalPinjam     DateTime
+  tanggalJatuhTempo DateTime
+  tanggalKembali    DateTime?
+  jumlahHariTelat   Int         @default(0)
+  dendaPerHari      Float       @default(1000)
+  totalDenda        Float           @default(0)
+  status            DendaStatus     @default(BELUM_DIBAYAR)
+  paymentMethod     PaymentMethod?
+  tanggalDibayar    DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book        Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@map("denda")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  rating    Int      @default(5)
+  ulasan    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@map("reviews")
+}
