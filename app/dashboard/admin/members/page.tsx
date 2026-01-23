@@ -27,6 +27,15 @@ interface Member {
 }
 
 export default function MembersPage() {
+  // Color palette - Teal
+  const colorPalette = {
+    primary: '#4FD3C4',      // Teal bright
+    dark: '#0F766E',         // Teal dark
+    light: '#F0FDFB',        // Mint very light
+    accent: '#2DD4BF',       // Teal medium
+    lightAccent: '#CCFBF1',  // Teal very light
+  }
+
   const [members, setMembers] = useState<Member[]>([])
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([])
   const [search, setSearch] = useState('')
@@ -151,18 +160,19 @@ export default function MembersPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
-              Kelola Anggota
+            <h1 className="text-3xl font-bold" style={{ color: colorPalette.dark }}>
+              👥 Kelola Anggota
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-gray-600 mt-2">
               Kelola data anggota perpustakaan
             </p>
           </div>
           <Button 
             onClick={() => setShowForm(true)}
-            style={{ backgroundColor: '#1A3D64' }}
+            style={{ backgroundColor: colorPalette.primary, color: 'white' }}
+            className="whitespace-nowrap"
           >
             <Plus className="w-4 h-4 mr-2" />
             Tambah Anggota
@@ -170,27 +180,28 @@ export default function MembersPage() {
         </div>
 
         {showForm && (
-          <Card>
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader>
-              <CardTitle>
-                {editingMember ? 'Edit Anggota' : 'Tambah Anggota Baru'}
+              <CardTitle style={{ color: colorPalette.dark }}>
+                {editingMember ? '✏️ Edit Anggota' : '➕ Tambah Anggota Baru'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium">Username *</label>
+                    <label className="text-sm font-medium" style={{ color: colorPalette.dark }}>Username *</label>
                     <Input
                       value={formData.username}
                       onChange={(e) =>
                         setFormData({ ...formData, username: e.target.value })
                       }
+                      style={{ borderColor: colorPalette.accent }}
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">
+                    <label className="text-sm font-medium" style={{ color: colorPalette.dark }}>
                       Password {editingMember ? '(kosongkan jika tidak diubah)' : '*'}
                     </label>
                     <Input
@@ -199,21 +210,23 @@ export default function MembersPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
                       }
+                      style={{ borderColor: colorPalette.accent }}
                       required={!editingMember}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Nama Lengkap *</label>
+                    <label className="text-sm font-medium" style={{ color: colorPalette.dark }}>Nama Lengkap *</label>
                     <Input
                       value={formData.nama}
                       onChange={(e) =>
                         setFormData({ ...formData, nama: e.target.value })
                       }
+                      style={{ borderColor: colorPalette.accent }}
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Email</label>
+                    <label className="text-sm font-medium" style={{ color: colorPalette.dark }}>Email</label>
                     <Input
                       type="email"
                       value={formData.email}
@@ -223,32 +236,39 @@ export default function MembersPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Alamat</label>
+                    <label className="text-sm font-medium" style={{ color: colorPalette.dark }}>Alamat</label>
                     <Input
                       value={formData.alamat}
                       onChange={(e) =>
                         setFormData({ ...formData, alamat: e.target.value })
                       }
+                      style={{ borderColor: colorPalette.accent }}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Telepon</label>
+                    <label className="text-sm font-medium" style={{ color: colorPalette.dark }}>Telepon</label>
                     <Input
                       value={formData.telepon}
                       onChange={(e) =>
                         setFormData({ ...formData, telepon: e.target.value })
                       }
+                      style={{ borderColor: colorPalette.accent }}
                     />
                   </div>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 pt-4">
                   <Button 
                     type="submit"
-                    style={{ backgroundColor: '#1A3D64' }}
+                    style={{ backgroundColor: colorPalette.primary, color: 'white' }}
                   >
                     {editingMember ? 'Update' : 'Tambah'}
                   </Button>
-                  <Button type="button" variant="outline" onClick={resetForm}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={resetForm}
+                    style={{ borderColor: colorPalette.accent, color: colorPalette.dark }}
+                  >
                     Batal
                   </Button>
                 </div>
@@ -257,60 +277,64 @@ export default function MembersPage() {
           </Card>
         )}
 
-        <Card>
+        <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
           <CardHeader>
-            <CardTitle>Daftar Anggota</CardTitle>
+            <CardTitle style={{ color: colorPalette.dark }}>📋 Daftar Anggota</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Cari anggota..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10"
+                  style={{ borderColor: colorPalette.accent }}
                 />
               </div>
             </div>
 
             {loading ? (
-              <div className="text-center py-8">Memuat...</div>
+              <div className="text-center py-8" style={{ color: colorPalette.dark }}>Memuat...</div>
             ) : (
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Nama</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Telepon</TableHead>
-                    <TableHead>Total Peminjaman</TableHead>
-                    <TableHead>Aksi</TableHead>
+                <TableHeader style={{ backgroundColor: colorPalette.light }}>
+                  <TableRow style={{ borderBottomColor: colorPalette.accent, borderBottomWidth: '2px' }}>
+                    <TableHead style={{ color: colorPalette.dark }}>Username</TableHead>
+                    <TableHead style={{ color: colorPalette.dark }}>Nama</TableHead>
+                    <TableHead style={{ color: colorPalette.dark }}>Email</TableHead>
+                    <TableHead style={{ color: colorPalette.dark }}>Telepon</TableHead>
+                    <TableHead style={{ color: colorPalette.dark }}>Total Peminjaman</TableHead>
+                    <TableHead style={{ color: colorPalette.dark }}>Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredMembers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
+                      <TableCell colSpan={6} className="text-center py-8" style={{ color: colorPalette.dark }}>
                         Tidak ada data
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredMembers.map((member) => (
-                      <TableRow key={member.id}>
-                        <TableCell className="font-medium">
+                      <TableRow key={member.id} style={{ borderBottomColor: colorPalette.light }}>
+                        <TableCell className="font-medium" style={{ color: colorPalette.dark }}>
                           {member.username}
                         </TableCell>
-                        <TableCell>{member.nama}</TableCell>
+                        <TableCell style={{ color: colorPalette.dark }}>{member.nama}</TableCell>
                         <TableCell>{member.email || '-'}</TableCell>
                         <TableCell>{member.telepon || '-'}</TableCell>
-                        <TableCell>{member._count.transactions}</TableCell>
+                        <TableCell style={{ color: colorPalette.primary }}>
+                          <span className="font-semibold">{member._count.transactions}</span>
+                        </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(member)}
+                              style={{ borderColor: colorPalette.accent, color: colorPalette.dark }}
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
@@ -318,6 +342,7 @@ export default function MembersPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleDelete(member.id)}
+                              style={{ borderColor: '#EF4444', color: '#EF4444' }}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>

@@ -52,6 +52,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isAdmin = user?.role === 'ADMIN'
   const isSiswa = user?.role === 'SISWA'
 
+  // Color palette - Teal dengan kombinasi cream dan mint
+  const colors = {
+    primary: '#4FD3C4', // Teal bright
+    dark: '#0F766E',    // Teal dark
+    light: '#F0FDFB',   // Mint very light
+    accent: '#2DD4BF',  // Teal medium
+    text: '#134E4A',    // Teal very dark
+  }
+
   const adminMenu = [
     { href: '/dashboard/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/dashboard/admin/books', label: 'Kelola Data Buku', icon: BookOpen },
@@ -76,19 +85,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const menuItems = isAdmin ? adminMenu : siswaMenu
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F2F4F7' }}>
+    <div className="min-h-screen" style={{ backgroundColor: colors.light }}>
       {/* Mobile Header */}
-      <div className="lg:hidden bg-white border-b shadow-sm">
+      <div className="lg:hidden shadow-lg" style={{ backgroundColor: colors.primary }}>
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-xl font-bold" style={{ color: '#1A3D64' }}>
-            Sistem Peminjaman Buku
+          <h1 className="text-xl font-bold text-white">
+            📚 Perpustakaan Digital
           </h1>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="hover:bg-white/20"
           >
-            {sidebarOpen ? <X /> : <Menu />}
+            {sidebarOpen ? <X className="text-white" /> : <Menu className="text-white" />}
           </Button>
         </div>
       </div>
@@ -98,14 +108,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <aside
           className={`${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r shadow-lg transition-transform duration-300`}
+          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 shadow-xl transition-transform duration-300`}
+          style={{ backgroundColor: colors.primary }}
         >
           <div className="h-full flex flex-col">
-            <div className="p-6 border-b">
-              <h2 className="text-lg font-bold" style={{ color: '#1A3D64' }}>
-                {isAdmin ? 'Admin Panel' : 'Dashboard Siswa'}
+            <div className="p-6 border-b" style={{ borderColor: colors.dark, backgroundColor: colors.dark }}>
+              <h2 className="text-lg font-bold text-white">
+                📚 Admin Panel
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">{user?.nama}</p>
+              <p className="text-sm text-gray-100 mt-1">{user?.nama}</p>
             </div>
             <nav className="flex-1 p-4 space-y-2">
               {menuItems.map((item) => {
@@ -116,23 +127,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     key={item.href}
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                       isActive
-                        ? 'text-white'
-                        : 'hover:bg-accent text-foreground'
+                        ? 'text-white shadow-md scale-105'
+                        : 'text-gray-100 hover:bg-white/10'
                     }`}
-                    style={isActive ? { backgroundColor: '#1A3D64' } : {}}
+                    style={isActive ? { backgroundColor: colors.dark } : {}}
                   >
                     <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <span className="font-medium">{item.label}</span>
                   </Link>
                 )
               })}
             </nav>
-            <div className="p-4 border-t">
+            <div className="p-4 border-t" style={{ borderColor: colors.dark }}>
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full text-white border-white/30 hover:bg-white/10"
                 onClick={handleLogout}
               >
                 <LogOut className="w-4 h-4 mr-2" />

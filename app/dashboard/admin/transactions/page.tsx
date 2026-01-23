@@ -105,16 +105,25 @@ export default function TransactionsPage() {
     }
   }
 
+  // Color palette - Teal
+  const colorPalette = {
+    primary: '#4FD3C4',      // Teal bright
+    dark: '#0F766E',         // Teal dark
+    light: '#F0FDFB',        // Mint very light
+    accent: '#2DD4BF',       // Teal medium
+    lightAccent: '#CCFBF1',  // Teal very light
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'DIPINJAM':
-        return { bg: '#38BDF8', text: '#1A3D64' }
+        return { bg: '#4FD3C4', text: '#FFFFFF' }
       case 'DIKEMBALIKAN':
         return { bg: '#22C55E', text: '#FFFFFF' }
       case 'TERLAMBAT':
         return { bg: '#EF4444', text: '#FFFFFF' }
       default:
-        return { bg: '#F2F4F7', text: '#111827' }
+        return { bg: colorPalette.lightAccent, text: colorPalette.dark }
     }
   }
 
@@ -132,33 +141,35 @@ export default function TransactionsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
-            Kelola Transaksi
+          <h1 className="text-3xl font-bold" style={{ color: colorPalette.dark }}>
+            📋 Kelola Transaksi
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-gray-600 mt-2">
             Kelola semua transaksi peminjaman dan pengembalian buku
           </p>
         </div>
 
-        <Card>
+        <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
           <CardHeader>
-            <CardTitle>Daftar Transaksi</CardTitle>
+            <CardTitle style={{ color: colorPalette.dark }}>📝 Daftar Transaksi</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex space-x-4 mb-6">
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Cari transaksi..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10"
+                  style={{ borderColor: colorPalette.accent }}
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="px-4 py-2 border rounded-md"
+                style={{ borderColor: colorPalette.accent, color: colorPalette.dark }}
               >
                 <option value="">Semua Status</option>
                 <option value="DIPINJAM">Dipinjam</option>
@@ -175,22 +186,22 @@ export default function TransactionsPage() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                   {paginatedTransactions.map((transaction) => {
                     const statusColor = getStatusColor(transaction.status)
                     const overdue = isOverdue(transaction.batasKembali, transaction.status)
                     
                     return (
-                      <Card key={transaction.id} className="hover:shadow-lg transition-shadow">
+                      <Card key={transaction.id} className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
                         <CardHeader>
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <CardTitle className="text-lg">
+                              <CardTitle className="text-lg" style={{ color: colorPalette.dark }}>
                                 {transaction.book.judul}
                               </CardTitle>
                               <div className="flex items-center mt-2 space-x-2">
-                                <User className="w-4 h-4 text-muted-foreground" />
-                                <p className="text-sm text-muted-foreground">
+                                <User className="w-4 h-4 text-gray-500" />
+                                <p className="text-sm text-gray-600">
                                   {transaction.user.nama}
                                 </p>
                               </div>
@@ -209,20 +220,20 @@ export default function TransactionsPage() {
                         <CardContent className="space-y-4">
                           <div className="space-y-2 text-sm">
                             <div className="flex items-center space-x-2">
-                              <Calendar className="w-4 h-4 text-muted-foreground" />
+                              <Calendar className="w-4 h-4 text-gray-500" />
                               <div>
-                                <p className="font-medium">Tanggal Pinjam:</p>
-                                <p className="text-muted-foreground">
+                                <p className="font-medium" style={{ color: colorPalette.dark }}>Tanggal Pinjam:</p>
+                                <p className="text-gray-600">
                                   {new Date(transaction.tanggalPinjam).toLocaleDateString('id-ID')}
                                 </p>
                               </div>
                             </div>
                             <div className="flex items-center space-x-2">
-                              <Calendar className="w-4 h-4 text-muted-foreground" />
+                              <Calendar className="w-4 h-4 text-gray-500" />
                               <div>
-                                <p className="font-medium">Batas Kembali:</p>
+                                <p className="font-medium" style={{ color: colorPalette.dark }}>Batas Kembali:</p>
                                 <div className="flex items-center space-x-2">
-                                  <p className="text-muted-foreground">
+                                  <p className="text-gray-600">
                                     {new Date(transaction.batasKembali).toLocaleDateString('id-ID')}
                                   </p>
                                   {overdue && (
@@ -233,10 +244,10 @@ export default function TransactionsPage() {
                             </div>
                             {transaction.tanggalKembali && (
                               <div className="flex items-center space-x-2">
-                                <Calendar className="w-4 h-4 text-muted-foreground" />
+                                <Calendar className="w-4 h-4 text-gray-500" />
                                 <div>
-                                  <p className="font-medium">Tanggal Kembali:</p>
-                                  <p className="text-muted-foreground">
+                                  <p className="font-medium" style={{ color: colorPalette.dark }}>Tanggal Kembali:</p>
+                                  <p className="text-gray-600">
                                     {new Date(transaction.tanggalKembali).toLocaleDateString('id-ID')}
                                   </p>
                                 </div>
@@ -244,7 +255,7 @@ export default function TransactionsPage() {
                             )}
                             {transaction.denda > 0 && (
                               <div>
-                                <p className="font-medium">Denda:</p>
+                                <p className="font-medium" style={{ color: colorPalette.dark }}>Denda:</p>
                                 <p className="text-sm" style={{ color: '#EF4444' }}>
                                   Rp {transaction.denda.toLocaleString('id-ID')}
                                 </p>
@@ -253,10 +264,9 @@ export default function TransactionsPage() {
                           </div>
                           <div className="flex items-center justify-between">
                             <span
-                              className="px-3 py-1 rounded-full text-xs font-medium"
+                              className="px-3 py-1 rounded-full text-xs font-medium text-white"
                               style={{ 
-                                backgroundColor: statusColor.bg + '20',
-                                color: statusColor.text
+                                backgroundColor: statusColor.bg
                               }}
                             >
                               {transaction.status}
@@ -266,13 +276,13 @@ export default function TransactionsPage() {
                             {transaction.status === 'DIPINJAM' && (
                               <Button
                                 variant="outline"
-                                className="flex-1"
+                                className="flex-1 text-xs"
                                 onClick={() =>
                                   handleUpdateStatus(transaction.id, 'DIKEMBALIKAN')
                                 }
                                 style={{ borderColor: '#22C55E', color: '#22C55E' }}
                               >
-                                <BookCheck className="w-4 h-4 mr-2" />
+                                <BookCheck className="w-4 h-4 mr-1" />
                                 Kembalikan
                               </Button>
                             )}
@@ -292,38 +302,44 @@ export default function TransactionsPage() {
                 </div>
 
                 {/* Pagination Controls */}
-                <div className="flex items-center justify-center space-x-2 mt-8 pt-6 border-t">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                  >
-                    Sebelumnya
-                  </Button>
-                  
-                  <div className="flex space-x-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        onClick={() => setCurrentPage(page)}
-                        className="w-10 h-10"
-                        style={currentPage === page ? { backgroundColor: '#1A3D64', color: 'white' } : {}}
-                      >
-                        {page}
-                      </Button>
-                    ))}
+                <div className="flex flex-col items-center justify-center space-y-4 mt-8 pt-6 border-t">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      style={{ borderColor: colorPalette.primary, color: colorPalette.dark }}
+                      className="text-sm"
+                    >
+                      ← Sebelumnya
+                    </Button>
+                    
+                    <div className="flex space-x-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? "default" : "outline"}
+                          onClick={() => setCurrentPage(page)}
+                          className="w-10 h-10"
+                          style={currentPage === page ? { backgroundColor: colorPalette.primary, color: 'white' } : { borderColor: colorPalette.accent, color: colorPalette.dark }}
+                        >
+                          {page}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      style={{ borderColor: colorPalette.primary, color: colorPalette.dark }}
+                      className="text-sm"
+                    >
+                      Selanjutnya →
+                    </Button>
                   </div>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                  >
-                    Selanjutnya
-                  </Button>
-
-                  <div className="ml-4 text-sm text-muted-foreground">
+                  <div className="text-sm font-medium" style={{ color: colorPalette.dark }}>
                     Halaman {currentPage} dari {totalPages} (Total: {filteredTransactions.length})
                   </div>
                 </div>

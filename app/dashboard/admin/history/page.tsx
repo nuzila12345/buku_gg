@@ -31,6 +31,15 @@ interface Transaction {
 }
 
 export default function AdminHistoryPage() {
+  // Color palette - Teal
+  const colorPalette = {
+    primary: '#4FD3C4',      // Teal bright
+    dark: '#0F766E',         // Teal dark
+    light: '#F0FDFB',        // Mint very light
+    accent: '#2DD4BF',       // Teal medium
+    lightAccent: '#CCFBF1',  // Teal very light
+  }
+
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
@@ -79,13 +88,13 @@ export default function AdminHistoryPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'DIPINJAM':
-        return { bg: '#FEF3C7', text: '#D97706', border: '#F59E0B', icon: Clock }
+        return { bg: '#4FD3C4', text: '#FFFFFF', border: '#2DD4BF', icon: Clock }
       case 'DIKEMBALIKAN':
-        return { bg: '#D1FAE5', text: '#059669', border: '#10B981', icon: CheckCircle }
+        return { bg: '#22C55E', text: '#FFFFFF', border: '#16A34A', icon: CheckCircle }
       case 'TERLAMBAT':
-        return { bg: '#FEE2E2', text: '#DC2626', border: '#EF4444', icon: AlertCircle }
+        return { bg: '#EF4444', text: '#FFFFFF', border: '#DC2626', icon: AlertCircle }
       default:
-        return { bg: '#F3F4F6', text: '#6B7280', border: '#D1D5DB', icon: Clock }
+        return { bg: colorPalette.lightAccent, text: colorPalette.dark, border: colorPalette.accent, icon: Clock }
     }
   }
 
@@ -147,42 +156,42 @@ export default function AdminHistoryPage() {
       <div className="space-y-6">
         {/* Page Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Riwayat Peminjaman</h1>
+          <h1 className="text-3xl font-bold" style={{ color: colorPalette.dark }}>📚 Riwayat Peminjaman</h1>
           <p className="text-gray-600 mt-1">Lihat semua riwayat peminjaman dan pengembalian buku</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border-0 shadow-md">
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600">Total Peminjaman</CardTitle>
+              <CardTitle className="text-sm font-semibold" style={{ color: colorPalette.dark }}>Total Peminjaman</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">{stats.total}</div>
+              <div className="text-3xl font-bold" style={{ color: colorPalette.primary }}>{stats.total}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-md">
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600">Sedang Dipinjam</CardTitle>
+              <CardTitle className="text-sm font-semibold" style={{ color: colorPalette.dark }}>Sedang Dipinjam</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-yellow-600">{stats.sedangDipinjam}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-md">
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600">Sudah Dikembalikan</CardTitle>
+              <CardTitle className="text-sm font-semibold" style={{ color: colorPalette.dark }}>Sudah Dikembalikan</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-green-600">{stats.sudahDikembalikan}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-md">
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600">Terlambat</CardTitle>
+              <CardTitle className="text-sm font-semibold" style={{ color: colorPalette.dark }}>Terlambat</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-red-600">{stats.terlambat}</div>
@@ -191,9 +200,9 @@ export default function AdminHistoryPage() {
         </div>
 
         {/* Filter Buttons */}
-        <Card className="border-0 shadow-md">
+        <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
           <CardHeader>
-            <CardTitle className="text-lg">Filter Status</CardTitle>
+            <CardTitle className="text-lg" style={{ color: colorPalette.dark }}>🔍 Filter Status</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
@@ -201,11 +210,8 @@ export default function AdminHistoryPage() {
                 <Button
                   key={status}
                   onClick={() => setFilterStatus(status as any)}
-                  className={`${
-                    filterStatus === status
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className="text-sm font-medium"
+                  style={filterStatus === status ? { backgroundColor: colorPalette.primary, color: 'white', borderColor: colorPalette.primary } : { backgroundColor: colorPalette.light, color: colorPalette.dark, borderColor: colorPalette.accent }}
                 >
                   {status === 'SEMUA' ? 'Semua (' + transactions.length + ')' : status === 'DIPINJAM' ? 'Sedang Dipinjam (' + stats.sedangDipinjam + ')' : status === 'DIKEMBALIKAN' ? 'Sudah Dikembalikan (' + stats.sudahDikembalikan + ')' : 'Terlambat (' + stats.terlambat + ')'}
                 </Button>
@@ -215,9 +221,9 @@ export default function AdminHistoryPage() {
         </Card>
 
         {/* Transactions List */}
-        <Card className="border-0 shadow-md">
+        <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
           <CardHeader>
-            <CardTitle>Daftar Peminjaman</CardTitle>
+            <CardTitle style={{ color: colorPalette.dark }}>📋 Daftar Peminjaman</CardTitle>
           </CardHeader>
           <CardContent>
             {filteredTransactions.length === 0 ? (
@@ -236,8 +242,8 @@ export default function AdminHistoryPage() {
                     return (
                       <div
                         key={transaction.id}
-                        className="border rounded-lg p-4"
-                        style={{ borderColor: statusColor.border }}
+                        className="border-glow card-3d hover-lift p-4 rounded-lg transition-all"
+                        style={{ backgroundColor: 'white', borderColor: statusColor.border, borderWidth: '2px' }}
                       >
                         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                           {/* Left Section - Book Info */}
@@ -250,14 +256,14 @@ export default function AdminHistoryPage() {
                               />
                             )}
                             <div className="flex-1">
-                              <h3 className="font-bold text-gray-900">{transaction.book.judul}</h3>
+                              <h3 className="font-bold" style={{ color: colorPalette.dark }}>{transaction.book.judul}</h3>
                               <p className="text-sm text-gray-600 mt-1">Penulis: {transaction.book.penulis}</p>
                               <p className="text-sm text-gray-600">Penerbit: {transaction.book.penerbit}</p>
 
                               {/* User Info */}
-                              <div className="mt-3 p-3 bg-blue-50 rounded">
-                                <p className="text-sm font-semibold text-blue-900">Peminjam: {transaction.user.nama}</p>
-                                <p className="text-xs text-blue-700">Username: {transaction.user.username}</p>
+                              <div className="mt-3 p-3 rounded" style={{ backgroundColor: colorPalette.lightAccent }}>
+                                <p className="text-sm font-semibold" style={{ color: colorPalette.dark }}>Peminjam: {transaction.user.nama}</p>
+                                <p className="text-xs text-gray-600">Username: {transaction.user.username}</p>
                               </div>
                             </div>
                           </div>
@@ -275,10 +281,10 @@ export default function AdminHistoryPage() {
 
                             {/* Dates */}
                             <div className="text-sm text-gray-600">
-                              <p>Tanggal Pinjam: <span className="font-semibold text-gray-900">{formatDate(transaction.tanggalPinjam)}</span></p>
-                              <p>Batas Kembali: <span className="font-semibold text-gray-900">{formatDate(transaction.batasKembali)}</span></p>
+                              <p>Tanggal Pinjam: <span className="font-semibold" style={{ color: colorPalette.dark }}>{formatDate(transaction.tanggalPinjam)}</span></p>
+                              <p>Batas Kembali: <span className="font-semibold" style={{ color: colorPalette.dark }}>{formatDate(transaction.batasKembali)}</span></p>
                               {transaction.tanggalKembali && (
-                                <p>Tanggal Kembali: <span className="font-semibold text-gray-900">{formatDate(transaction.tanggalKembali)}</span></p>
+                                <p>Tanggal Kembali: <span className="font-semibold" style={{ color: colorPalette.dark }}>{formatDate(transaction.tanggalKembali)}</span></p>
                               )}
                             </div>
 

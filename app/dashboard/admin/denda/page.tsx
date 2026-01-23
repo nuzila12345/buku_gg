@@ -28,6 +28,15 @@ interface Denda {
 }
 
 export default function DendaPage() {
+  // Color palette - Teal
+  const colorPalette = {
+    primary: '#4FD3C4',      // Teal bright
+    dark: '#0F766E',         // Teal dark
+    light: '#F0FDFB',        // Mint very light
+    accent: '#2DD4BF',       // Teal medium
+    lightAccent: '#CCFBF1',  // Teal very light
+  }
+
   const [dendaList, setDendaList] = useState<Denda[]>([])
   const [filteredDenda, setFilteredDenda] = useState<Denda[]>([])
   const [search, setSearch] = useState('')
@@ -133,33 +142,33 @@ export default function DendaPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
-            Kelola Denda Keterlambatan
+          <h1 className="text-3xl font-bold" style={{ color: colorPalette.dark }}>
+            💰 Kelola Denda Keterlambatan
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-gray-600 mt-2">
             Manajemen denda akibat keterlambatan pengembalian buku
           </p>
         </div>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium" style={{ color: colorPalette.dark }}>
                 Total Denda
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold" style={{ color: colorPalette.primary }}>
                 {formatRupiah(totalDendaBelumDibayar + totalDendaSudahDibayar)}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 Dari {dendaList.length} transaksi terlambat
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-red-600">
                 Belum Dibayar
@@ -169,13 +178,13 @@ export default function DendaPage() {
               <div className="text-2xl font-bold text-red-600">
                 {formatRupiah(totalDendaBelumDibayar)}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 {dendaList.filter((d) => d.status === 'BELUM_DIBAYAR').length} denda menunggu
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-green-600">
                 Sudah Dibayar
@@ -185,7 +194,7 @@ export default function DendaPage() {
               <div className="text-2xl font-bold text-green-600">
                 {formatRupiah(totalDendaSudahDibayar)}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-gray-600 mt-1">
                 {dendaList.filter((d) => d.status === 'SUDAH_DIBAYAR').length} denda terselesaikan
               </p>
             </CardContent>
@@ -193,15 +202,15 @@ export default function DendaPage() {
         </div>
 
         {/* Filter dan Search */}
-        <Card>
+        <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
           <CardHeader>
-            <CardTitle className="text-lg">Filter Denda</CardTitle>
+            <CardTitle className="text-lg" style={{ color: colorPalette.dark }}>🔍 Filter Denda</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <div className="flex items-center border rounded-lg px-3 py-2 bg-white">
-                  <Search className="w-4 h-4 text-muted-foreground" />
+                <div className="flex items-center border rounded-lg px-3 py-2 bg-white" style={{ borderColor: colorPalette.accent }}>
+                  <Search className="w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Cari nama siswa, judul buku..."
@@ -216,6 +225,7 @@ export default function DendaPage() {
                   variant={filterStatus === 'ALL' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus('ALL')}
+                  style={filterStatus === 'ALL' ? { backgroundColor: colorPalette.primary, color: 'white', borderColor: colorPalette.primary } : { borderColor: colorPalette.accent, color: colorPalette.dark }}
                 >
                   Semua
                 </Button>
@@ -223,7 +233,7 @@ export default function DendaPage() {
                   variant={filterStatus === 'BELUM_DIBAYAR' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus('BELUM_DIBAYAR')}
-                  className={filterStatus === 'BELUM_DIBAYAR' ? 'bg-red-600 hover:bg-red-700' : ''}
+                  style={filterStatus === 'BELUM_DIBAYAR' ? { backgroundColor: '#EF4444', color: 'white', borderColor: '#EF4444' } : { borderColor: colorPalette.accent, color: colorPalette.dark }}
                 >
                   Belum Dibayar
                 </Button>
@@ -231,7 +241,7 @@ export default function DendaPage() {
                   variant={filterStatus === 'SUDAH_DIBAYAR' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus('SUDAH_DIBAYAR')}
-                  className={filterStatus === 'SUDAH_DIBAYAR' ? 'bg-green-600 hover:bg-green-700' : ''}
+                  style={filterStatus === 'SUDAH_DIBAYAR' ? { backgroundColor: '#22C55E', color: 'white', borderColor: '#22C55E' } : { borderColor: colorPalette.accent, color: colorPalette.dark }}
                 >
                   Sudah Dibayar
                 </Button>
@@ -241,43 +251,43 @@ export default function DendaPage() {
         </Card>
 
         {/* Table Denda */}
-        <Card>
+        <Card className="border-glow card-3d hover-lift" style={{ backgroundColor: colorPalette.lightAccent }}>
           <CardHeader>
-            <CardTitle>Daftar Denda Keterlambatan</CardTitle>
+            <CardTitle style={{ color: colorPalette.dark }}>📊 Daftar Denda Keterlambatan</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader className="w-8 h-8 animate-spin text-muted-foreground" />
+                <Loader className="w-8 h-8 animate-spin" style={{ color: colorPalette.primary }} />
               </div>
             ) : filteredDenda.length === 0 ? (
               <div className="text-center py-12">
-                <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">Tidak ada data denda</p>
+                <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600">Tidak ada data denda</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b">
+                  <thead style={{ backgroundColor: colorPalette.lightAccent, borderBottomColor: colorPalette.accent, borderBottomWidth: '2px' }}>
                     <tr>
-                      <th className="px-4 py-3 text-left font-semibold">No</th>
-                      <th className="px-4 py-3 text-left font-semibold">Nama Siswa</th>
-                      <th className="px-4 py-3 text-left font-semibold">Judul Buku</th>
-                      <th className="px-4 py-3 text-left font-semibold">Tgl Pinjam</th>
-                      <th className="px-4 py-3 text-left font-semibold">Tgl Jatuh Tempo</th>
-                      <th className="px-4 py-3 text-left font-semibold">Tgl Kembali</th>
-                      <th className="px-4 py-3 text-center font-semibold">Hari Telat</th>
-                      <th className="px-4 py-3 text-right font-semibold">Denda</th>
-                      <th className="px-4 py-3 text-center font-semibold">Status</th>
-                      <th className="px-4 py-3 text-center font-semibold">Aksi</th>
+                      <th className="px-4 py-3 text-left font-semibold" style={{ color: colorPalette.dark }}>No</th>
+                      <th className="px-4 py-3 text-left font-semibold" style={{ color: colorPalette.dark }}>Nama Siswa</th>
+                      <th className="px-4 py-3 text-left font-semibold" style={{ color: colorPalette.dark }}>Judul Buku</th>
+                      <th className="px-4 py-3 text-left font-semibold" style={{ color: colorPalette.dark }}>Tgl Pinjam</th>
+                      <th className="px-4 py-3 text-left font-semibold" style={{ color: colorPalette.dark }}>Tgl Jatuh Tempo</th>
+                      <th className="px-4 py-3 text-left font-semibold" style={{ color: colorPalette.dark }}>Tgl Kembali</th>
+                      <th className="px-4 py-3 text-center font-semibold" style={{ color: colorPalette.dark }}>Hari Telat</th>
+                      <th className="px-4 py-3 text-right font-semibold" style={{ color: colorPalette.dark }}>Denda</th>
+                      <th className="px-4 py-3 text-center font-semibold" style={{ color: colorPalette.dark }}>Status</th>
+                      <th className="px-4 py-3 text-center font-semibold" style={{ color: colorPalette.dark }}>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredDenda.map((denda, index) => (
-                      <tr key={denda.id} className="border-b hover:bg-gray-50">
+                      <tr key={denda.id} className="border-b hover:bg-white transition-colors" style={{ borderBottomColor: colorPalette.light }}>
                         <td className="px-4 py-3">{index + 1}</td>
                         <td className="px-4 py-3">
-                          <div className="font-medium">{denda.namaSiswa}</div>
+                          <div className="font-medium" style={{ color: colorPalette.dark }}>{denda.namaSiswa}</div>
                         </td>
                         <td className="px-4 py-3">
                           <div className="text-sm">
@@ -297,21 +307,21 @@ export default function DendaPage() {
                             : '-'}
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <span className="inline-block bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-semibold">
+                          <span className="inline-block text-white px-2 py-1 rounded text-xs font-semibold" style={{ backgroundColor: '#EF4444' }}>
                             {denda.jumlahHariTelat} hari
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-right font-semibold">
+                        <td className="px-4 py-3 text-right font-semibold" style={{ color: colorPalette.primary }}>
                           {formatRupiah(denda.totalDenda)}
                         </td>
                         <td className="px-4 py-3 text-center">
                           {denda.status === 'BELUM_DIBAYAR' ? (
-                            <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            <span className="inline-flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: '#EF4444' }}>
                               <XCircle className="w-3 h-3" />
                               Belum Dibayar
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                            <span className="inline-flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: '#22C55E' }}>
                               <CheckCircle className="w-3 h-3" />
                               Sudah Dibayar
                             </span>
@@ -323,7 +333,8 @@ export default function DendaPage() {
                               size="sm"
                               onClick={() => handleBayarDenda(denda.id)}
                               disabled={updating === denda.id}
-                              className="bg-green-600 hover:bg-green-700 text-white"
+                              className="text-white"
+                              style={{ backgroundColor: '#22C55E' }}
                             >
                               {updating === denda.id ? (
                                 <Loader className="w-3 h-3 animate-spin" />
@@ -332,7 +343,7 @@ export default function DendaPage() {
                               )}
                             </Button>
                           ) : (
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-xs" style={{ color: colorPalette.dark }}>
                               {denda.tanggalDibayar
                                 ? formatTanggal(denda.tanggalDibayar)
                                 : '-'}
