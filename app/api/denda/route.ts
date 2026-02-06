@@ -9,14 +9,28 @@ export async function GET(request: NextRequest) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
+    // Cari transaksi dengan status DIPINJAM yang sudah lewat jatuh tempo (belum dikembalikan)
+    // ATAU transaksi yang sudah dikembalikan/terlambat
     const transactions = await prisma.transaction.findMany({
       where: {
-        batasKembali: {
-          lt: today,
-        },
-        status: {
-          in: ['DIKEMBALIKAN', 'TERLAMBAT'],
-        },
+        OR: [
+          {
+            // Transaksi belum dikembalikan tapi sudah lewat jatuh tempo
+            status: 'DIPINJAM',
+            batasKembali: {
+              lt: today,
+            },
+          },
+          {
+            // Transaksi sudah dikembalikan atau terlambat
+            status: {
+              in: ['DIKEMBALIKAN', 'TERLAMBAT'],
+            },
+            batasKembali: {
+              lt: today,
+            },
+          },
+        ],
       },
       include: {
         user: {

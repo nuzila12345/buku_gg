@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, BookOpen, Eye, X } from 'lucide-react'
+import ReviewSection from '@/components/ReviewSection'
 
 interface Book {
   id: string
@@ -39,6 +41,7 @@ export default function BorrowPage() {
 
   useEffect(() => {
     filterBooks()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, kategori, books])
 
   const fetchBooks = async () => {
@@ -140,7 +143,7 @@ export default function BorrowPage() {
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fade-in">
         <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
           <div className="sticky top-0 bg-white border-b flex items-center justify-between p-6">
-            <h2 className="text-2xl font-bold" style={{ color: '#1A3D64' }}>
+            <h2 className="text-2xl font-bold" style={{ color: '#0F766E' }}>
               Detail Buku
             </h2>
             <button
@@ -157,9 +160,11 @@ export default function BorrowPage() {
               {/* Cover Buku */}
               <div className="col-span-1">
                 <div className="rounded-lg overflow-hidden shadow-md mb-4">
-                  <img
+                  <Image
                     src={coverImage}
                     alt={book.judul}
+                    width={300}
+                    height={400}
                     className="w-full h-64 object-cover"
                   />
                 </div>
@@ -269,6 +274,11 @@ export default function BorrowPage() {
               </div>
             )}
 
+            {/* Review & Rating Section */}
+            <div className="py-6 border-y">
+              <ReviewSection bookId={book.id} />
+            </div>
+
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4 border-t">
               <Button
@@ -286,7 +296,7 @@ export default function BorrowPage() {
                   onClose()
                 }}
                 disabled={!isAvailable}
-                style={{ backgroundColor: isAvailable ? '#1A3D64' : '#9CA3AF' }}
+                style={{ backgroundColor: isAvailable ? '#0F766E' : '#9CA3AF' }}
               >
                 {isAvailable ? 'Pinjam Buku' : 'Tidak Tersedia'}
               </Button>
@@ -301,7 +311,7 @@ export default function BorrowPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
+          <h1 className="text-3xl font-bold" style={{ color: '#0F766E' }}>
             Peminjaman Buku
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -351,9 +361,11 @@ export default function BorrowPage() {
                   <Card key={book.id} className="hover:shadow-lg transition-shadow overflow-hidden">
                     {/* Gambar Cover Buku */}
                     <div className="relative h-40 bg-gray-200 overflow-hidden">
-                      <img
+                      <Image
                         src={book.gambar || 'https://images.unsplash.com/photo-150784272343-583f20270319?w=300&h=300&fit=crop'}
                         alt={book.judul}
+                        width={300}
+                        height={300}
                         className="w-full h-full object-cover"
                       />
                       {/* Badge Stok */}
@@ -378,8 +390,8 @@ export default function BorrowPage() {
                             {book.penulis}
                           </p>
                         </div>
-                        <div className="p-2 rounded-lg" style={{ backgroundColor: '#F5C16C' }}>
-                          <BookOpen className="w-5 h-5" style={{ color: '#1A3D64' }} />
+                        <div className="p-2 rounded-lg" style={{ backgroundColor: '#4FD3C420' }}>
+                          <BookOpen className="w-5 h-5" style={{ color: '#0F766E' }} />
                         </div>
                       </div>
                     </CardHeader>
@@ -419,7 +431,7 @@ export default function BorrowPage() {
                             className="flex-1"
                             onClick={() => handleBorrow(book.id)}
                             disabled={getAvailableCount(book.id, book.jumlah) === 0}
-                            style={{ backgroundColor: '#1A3D64' }}
+                            style={{ backgroundColor: '#0F766E' }}
                           >
                             {getAvailableCount(book.id, book.jumlah) === 0
                               ? 'Tidak Tersedia'
@@ -453,7 +465,7 @@ export default function BorrowPage() {
                             size="sm"
                             variant={currentPage === page ? 'default' : 'outline'}
                             onClick={() => setCurrentPage(page)}
-                            style={currentPage === page ? { backgroundColor: '#1A3D64' } : {}}
+                            style={currentPage === page ? { backgroundColor: '#0F766E' } : {}}
                           >
                             {page}
                           </Button>

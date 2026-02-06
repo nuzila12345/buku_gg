@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -36,6 +37,7 @@ export default function QRCodeManagementPage() {
 
   useEffect(() => {
     filterBooks()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, books])
 
   const fetchBooks = async () => {
@@ -332,6 +334,7 @@ export default function QRCodeManagementPage() {
         containerRef.current.innerHTML = ''
         qrCode.append(containerRef.current)
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [book.id])
 
     return <div ref={containerRef} className="flex justify-center" />
@@ -342,7 +345,7 @@ export default function QRCodeManagementPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
+            <h1 className="text-3xl font-bold" style={{ color: '#0F766E' }}>
               QR Code Management
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -351,7 +354,7 @@ export default function QRCodeManagementPage() {
           </div>
           <Button
             onClick={() => setShowScanner(true)}
-            style={{ backgroundColor: '#1A3D64' }}
+            style={{ backgroundColor: '#0F766E' }}
             className="flex items-center gap-2"
           >
             <Camera className="w-4 h-4" />
@@ -410,7 +413,7 @@ export default function QRCodeManagementPage() {
                     <div className="flex gap-2">
                       <Button
                         className="flex-1"
-                        style={{ backgroundColor: '#1A3D64' }}
+                        style={{ backgroundColor: '#0F766E' }}
                       >
                         Pinjam Buku
                       </Button>
@@ -479,9 +482,11 @@ export default function QRCodeManagementPage() {
                       {/* Gambar Buku */}
                       {book.gambar && (
                         <div className="mb-4 flex justify-center">
-                          <img
+                          <Image
                             src={book.gambar}
                             alt={book.judul}
+                            width={128}
+                            height={160}
                             className="h-32 object-cover rounded"
                           />
                         </div>
@@ -519,7 +524,7 @@ export default function QRCodeManagementPage() {
                         <Button
                           className="w-full flex items-center justify-center gap-2"
                           onClick={() => handlePrintQR(book)}
-                          style={{ backgroundColor: '#1A3D64' }}
+                          style={{ backgroundColor: '#0F766E' }}
                         >
                           <Printer className="w-4 h-4" />
                           Print Label
@@ -550,7 +555,7 @@ export default function QRCodeManagementPage() {
                             size="sm"
                             variant={currentPage === page ? 'default' : 'outline'}
                             onClick={() => setCurrentPage(page)}
-                            style={currentPage === page ? { backgroundColor: '#1A3D64' } : {}}
+                            style={currentPage === page ? { backgroundColor: '#0F766E' } : {}}
                           >
                             {page}
                           </Button>
@@ -579,7 +584,7 @@ export default function QRCodeManagementPage() {
           <CardContent className="space-y-3 text-sm text-gray-700">
             <div>
               <p className="font-semibold mb-1">📱 Scan QR Code:</p>
-              <p>Klik tombol "Scan QR Code" di atas dan arahkan kamera ke QR code buku. Sistem akan otomatis mendeteksi dan menampilkan opsi peminjaman/pengembalian.</p>
+              <p>Klik tombol &quot;Scan QR Code&quot; di atas dan arahkan kamera ke QR code buku. Sistem akan otomatis mendeteksi dan menampilkan opsi peminjaman/pengembalian.</p>
             </div>
             <div>
               <p className="font-semibold mb-1">⬇️ Download:</p>

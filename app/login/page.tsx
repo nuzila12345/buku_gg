@@ -48,10 +48,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#F2F4F7' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#F0FDFB' }}>
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center" style={{ color: '#1A3D64' }}>
+          <CardTitle className="text-3xl font-bold text-center" style={{ color: '#0F766E' }}>
             Sistem Peminjaman Buku
           </CardTitle>
           <CardDescription className="text-center">
@@ -95,13 +95,13 @@ export default function LoginPage() {
               type="submit" 
               className="w-full" 
               disabled={loading}
-              style={{ backgroundColor: '#1A3D64' }}
+              style={{ backgroundColor: '#0F766E' }}
             >
               {loading ? 'Memproses...' : 'Masuk'}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
               Belum punya akun?{' '}
-              <Link href="/register" className="hover:underline font-medium" style={{ color: '#1A3D64' }}>
+              <Link href="/register" className="hover:underline font-medium" style={{ color: '#0F766E' }}>
                 Daftar di sini
               </Link>
             </p>

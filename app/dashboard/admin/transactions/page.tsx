@@ -34,6 +34,7 @@ export default function TransactionsPage() {
   useEffect(() => {
     filterTransactions()
     setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, statusFilter, transactions])
 
   const fetchTransactions = async () => {

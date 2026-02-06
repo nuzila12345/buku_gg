@@ -114,7 +114,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="h-full flex flex-col">
             <div className="p-6 border-b" style={{ borderColor: colors.dark, backgroundColor: colors.dark }}>
               <h2 className="text-lg font-bold text-white">
-                📚 Admin Panel
+                📚 Perpustakaan 
               </h2>
               <p className="text-sm text-gray-100 mt-1">{user?.nama}</p>
             </div>

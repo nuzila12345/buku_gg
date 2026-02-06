@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -54,6 +55,7 @@ export default function AdminHistoryPage() {
   useEffect(() => {
     filterTransactions()
     setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, transactions])
 
   const fetchTransactions = async () => {
@@ -249,9 +251,11 @@ export default function AdminHistoryPage() {
                           {/* Left Section - Book Info */}
                           <div className="flex gap-4 flex-1">
                             {transaction.book.gambar && (
-                              <img
+                              <Image
                                 src={transaction.book.gambar}
                                 alt={transaction.book.judul}
+                                width={80}
+                                height={112}
                                 className="w-20 h-28 object-cover rounded"
                               />
                             )}

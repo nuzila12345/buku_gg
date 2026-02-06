@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -60,6 +61,7 @@ export default function BooksPage() {
 
   useEffect(() => {
     filterBooks()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, kategori, books])
 
   const fetchBooks = async () => {
@@ -217,9 +219,11 @@ export default function BooksPage() {
               {/* Cover Buku */}
               <div className="col-span-1">
                 <div className="rounded-lg overflow-hidden shadow-md mb-4">
-                  <img
+                  <Image
                     src={coverImage}
                     alt={book.judul}
+                    width={300}
+                    height={400}
                     className="w-full h-64 object-cover"
                   />
                 </div>
@@ -474,9 +478,11 @@ export default function BooksPage() {
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
                       />
                       {formData.gambar && (
-                        <img
+                        <Image
                           src={formData.gambar}
                           alt="Preview"
+                          width={48}
+                          height={64}
                           className="w-12 h-16 object-cover rounded border"
                         />
                       )}
@@ -584,9 +590,11 @@ export default function BooksPage() {
                     <Card key={book.id} className="border-glow card-3d hover-lift h-full overflow-hidden flex flex-col" style={{ backgroundColor: colorPalette.lightAccent }}>
                       {/* Gambar Cover Buku */}
                       <div className="relative h-48 bg-gray-200 overflow-hidden">
-                        <img
+                        <Image
                           src={book.gambar || 'https://images.unsplash.com/photo-150784272343-583f20270319?w=300&h=400&fit=crop'}
                           alt={book.judul}
+                          width={300}
+                          height={400}
                           className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                         />
                         {/* Badge Stok */}

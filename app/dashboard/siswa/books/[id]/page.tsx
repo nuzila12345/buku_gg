@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, CheckCircle, Camera, X, QrCode, BookOpen } from 'lucide-react';
 import jsQR from 'jsqr';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
+import ReviewSection from '@/components/ReviewSection';
 
 interface Book {
   id: string;
@@ -67,6 +69,7 @@ export default function BookDetailPage() {
       scanningRef.current = true;
       scanQRCode();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCameraActive]);
 
   // Start camera
@@ -234,9 +237,11 @@ export default function BookDetailPage() {
               {/* Cover */}
               <div className="md:col-span-1">
                 {book.gambar ? (
-                  <img
+                  <Image
                     src={book.gambar}
                     alt={book.judul}
+                    width={300}
+                    height={400}
                     className="w-full rounded-lg shadow-md mb-6"
                   />
                 ) : (
@@ -349,6 +354,11 @@ export default function BookDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Review & Rating Section */}
+            <div className="mt-12 pt-12 border-t">
+              <ReviewSection bookId={book.id} />
+            </div>
           </div>
         ) : (
           /* Scanner View */
@@ -356,7 +366,7 @@ export default function BookDetailPage() {
             <div className="max-w-md mx-auto">
               <h2 className="text-2xl font-bold text-center mb-2">Konfirmasi Peminjaman</h2>
               <p className="text-center text-gray-600 mb-6">
-                Scan QR code untuk meminjam "{book.judul}"
+                Scan QR code untuk meminjam &quot;{book.judul}&quot;
               </p>
 
               {/* Camera Error */}

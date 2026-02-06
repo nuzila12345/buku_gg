@@ -57,6 +57,7 @@ export default function MembersPage() {
 
   useEffect(() => {
     filterMembers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, members])
 
   const fetchMembers = async () => {

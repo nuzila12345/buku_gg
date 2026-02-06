@@ -42,7 +42,7 @@ export default function DendaPage() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState<string | null>(null)
-  const [filterStatus, setFilterStatus] = useState<'ALL' | 'BELUM_DIBAYAR' | 'SUDAH_DIBAYAR'>('ALL')
+  const [filterStatus, setFilterStatus] = useState<'ALL' | 'BELUM_DIBAYAR' | 'PENDING_KONFIRMASI' | 'SUDAH_DIBAYAR'>('ALL')
 
   useEffect(() => {
     fetchDenda()
@@ -50,6 +50,7 @@ export default function DendaPage() {
 
   useEffect(() => {
     filterDenda()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, filterStatus, dendaList])
 
   const fetchDenda = async () => {
@@ -94,12 +95,22 @@ export default function DendaPage() {
     try {
       setUpdating(dendaId)
 
+      // Fetch current user data to get admin ID
+      const userRes = await fetch('/api/auth/me')
+      const userData = await userRes.json()
+      const adminId = userData.user?.id
+
+      if (!adminId) {
+        alert('Gagal mendapatkan ID admin')
+        return
+      }
+
+      // Konfirmasi pembayaran menggunakan PATCH
       const res = await fetch(`/api/denda/${dendaId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          status: 'SUDAH_DIBAYAR',
-          tanggalDibayar: new Date().toISOString(),
+          adminId: adminId,
         }),
       })
 
@@ -120,7 +131,7 @@ export default function DendaPage() {
           : d
       )
       setDendaList(updatedDenda)
-      alert('Denda berhasil ditandai sebagai sudah dibayar')
+      alert('Pembayaran denda berhasil dikonfirmasi')
     } catch (error) {
       console.error('Error updating denda:', error)
       alert('Gagal memperbarui denda')
@@ -130,12 +141,16 @@ export default function DendaPage() {
   }
 
   const totalDendaBelumDibayar = dendaList
-    .filter((d) => d.status === 'BELUM_DIBAYAR')
+    .filter((d) => d.status === 'BELUM_DIBAYAR' || d.status === 'PENDING_KONFIRMASI')
     .reduce((sum, d) => sum + d.totalDenda, 0)
 
   const totalDendaSudahDibayar = dendaList
     .filter((d) => d.status === 'SUDAH_DIBAYAR')
     .reduce((sum, d) => sum + d.totalDenda, 0)
+
+  const totalPendingKonfirmasi = dendaList
+    .filter((d) => d.status === 'PENDING_KONFIRMASI')
+    .reduce((sum, d) => sum + 1, 0)
 
   return (
     <DashboardLayout>
@@ -238,6 +253,14 @@ export default function DendaPage() {
                   Belum Dibayar
                 </Button>
                 <Button
+                  variant={filterStatus === 'PENDING_KONFIRMASI' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setFilterStatus('PENDING_KONFIRMASI')}
+                  style={filterStatus === 'PENDING_KONFIRMASI' ? { backgroundColor: '#F59E0B', color: 'white', borderColor: '#F59E0B' } : { borderColor: colorPalette.accent, color: colorPalette.dark }}
+                >
+                  Menunggu Konfirmasi ({totalPendingKonfirmasi})
+                </Button>
+                <Button
                   variant={filterStatus === 'SUDAH_DIBAYAR' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus('SUDAH_DIBAYAR')}
@@ -320,6 +343,11 @@ export default function DendaPage() {
                               <XCircle className="w-3 h-3" />
                               Belum Dibayar
                             </span>
+                          ) : denda.status === 'PENDING_KONFIRMASI' ? (
+                            <span className="inline-flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: '#F59E0B' }}>
+                              <AlertCircle className="w-3 h-3" />
+                              Menunggu Konfirmasi
+                            </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: '#22C55E' }}>
                               <CheckCircle className="w-3 h-3" />
@@ -331,6 +359,16 @@ export default function DendaPage() {
                           {denda.status === 'BELUM_DIBAYAR' ? (
                             <Button
                               size="sm"
+                              disabled={true}
+                              className="text-gray-600"
+                              style={{ backgroundColor: '#E5E7EB' }}
+                              title="Siswa belum mengajukan pembayaran"
+                            >
+                              Tunggu Ajuan
+                            </Button>
+                          ) : denda.status === 'PENDING_KONFIRMASI' ? (
+                            <Button
+                              size="sm"
                               onClick={() => handleBayarDenda(denda.id)}
                               disabled={updating === denda.id}
                               className="text-white"
@@ -339,15 +377,11 @@ export default function DendaPage() {
                               {updating === denda.id ? (
                                 <Loader className="w-3 h-3 animate-spin" />
                               ) : (
-                                'Bayar'
+                                'Konfirmasi'
                               )}
                             </Button>
                           ) : (
-                            <span className="text-xs" style={{ color: colorPalette.dark }}>
-                              {denda.tanggalDibayar
-                                ? formatTanggal(denda.tanggalDibayar)
-                                : '-'}
-                            </span>
+                            <span className="text-gray-500 text-sm">-</span>
                           )}
                         </td>
                       </tr>

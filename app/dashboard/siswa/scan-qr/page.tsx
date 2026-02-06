@@ -28,6 +28,7 @@ export default function ScanQRPage() {
       scanningRef.current = true;
       scanQRCode();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCameraActive]);
 
   // Start camera

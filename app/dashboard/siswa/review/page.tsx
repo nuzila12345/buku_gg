@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -31,16 +32,6 @@ interface Review {
 export default function ReviewPage() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
-  const [editingReviewId, setEditingReviewId] = useState<string | null>(null)
-  const [formData, setFormData] = useState({
-    bookId: '',
-    rating: 5,
-    ulasan: '',
-  })
-  const [bookSearch, setBookSearch] = useState('')
-  const [bookSuggestions, setBookSuggestions] = useState<any[]>([])
-  const [showBookSuggestions, setShowBookSuggestions] = useState(false)
-  const [selectedBook, setSelectedBook] = useState<any>(null)
 
   useEffect(() => {
     fetchReviews()
@@ -55,63 +46,6 @@ export default function ReviewPage() {
     } catch (error) {
       console.error('Error fetching reviews:', error)
       setLoading(false)
-    }
-  }
-
-  const searchBooks = async (query: string) => {
-    if (query.length < 2) {
-      setBookSuggestions([])
-      return
-    }
-
-    try {
-      const res = await fetch('/api/books')
-      const data = await res.json()
-      const filtered = data.books.filter(
-        (book: any) =>
-          book.judul.toLowerCase().includes(query.toLowerCase()) ||
-          book.penulis.toLowerCase().includes(query.toLowerCase())
-      )
-      setBookSuggestions(filtered)
-    } catch (error) {
-      console.error('Error searching books:', error)
-    }
-  }
-
-  const handleBookSelect = (book: any) => {
-    setSelectedBook(book)
-    setFormData({ ...formData, bookId: book.id })
-    setBookSuggestions([])
-    setShowBookSuggestions(false)
-    setBookSearch(`${book.judul} - ${book.penulis}`)
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!formData.bookId || !formData.rating || !formData.ulasan.trim()) {
-      alert('Semua field harus diisi')
-      return
-    }
-
-    try {
-      const res = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-
-      if (!res.ok) {
-        const data = await res.json()
-        alert(data.error || 'Gagal menyimpan review')
-        return
-      }
-
-      alert(editingReviewId ? 'Review berhasil diperbarui' : 'Review berhasil ditambahkan')
-      resetForm()
-      fetchReviews()
-    } catch (error) {
-      alert('Terjadi kesalahan')
     }
   }
 
@@ -134,17 +68,6 @@ export default function ReviewPage() {
     } catch (error) {
       alert('Terjadi kesalahan')
     }
-  }
-
-  const resetForm = () => {
-    setFormData({
-      bookId: '',
-      rating: 5,
-      ulasan: '',
-    })
-    setSelectedBook(null)
-    setBookSearch('')
-    setEditingReviewId(null)
   }
 
   const formatDate = (dateString: string) => {
@@ -190,7 +113,7 @@ export default function ReviewPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
+          <h1 className="text-3xl font-bold" style={{ color: '#0F766E' }}>
             Review & Rating Buku
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -215,130 +138,6 @@ export default function ReviewPage() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Form Tambah Review */}
-        <Card className="border-2" style={{ borderColor: '#38BDF8' }}>
-          <CardHeader>
-            <CardTitle>Tulis Review Baru</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Search Buku */}
-              <div>
-                <label className="text-sm font-medium">Pilih Buku *</label>
-                <div className="relative mt-2">
-                  <Input
-                    placeholder="Cari buku..."
-                    value={bookSearch}
-                    onChange={(e) => {
-                      setBookSearch(e.target.value)
-                      searchBooks(e.target.value)
-                      setShowBookSuggestions(true)
-                    }}
-                    onFocus={() => setShowBookSuggestions(true)}
-                  />
-
-                  {showBookSuggestions && bookSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 z-10 bg-white border rounded-lg mt-1 shadow-lg max-h-64 overflow-y-auto">
-                      {bookSuggestions.map((book) => (
-                        <button
-                          key={book.id}
-                          type="button"
-                          onClick={() => handleBookSelect(book)}
-                          className="w-full text-left p-3 hover:bg-gray-100 border-b last:border-b-0 flex gap-3"
-                        >
-                          {book.gambar && (
-                            <img
-                              src={book.gambar}
-                              alt={book.judul}
-                              className="w-10 h-14 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1">
-                            <p className="font-semibold text-sm">{book.judul}</p>
-                            <p className="text-xs text-gray-600">{book.penulis}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {selectedBook && (
-                  <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {selectedBook.gambar && (
-                        <img
-                          src={selectedBook.gambar}
-                          alt={selectedBook.judul}
-                          className="w-10 h-14 object-cover rounded"
-                        />
-                      )}
-                      <div>
-                        <p className="font-semibold text-sm">{selectedBook.judul}</p>
-                        <p className="text-xs text-gray-600">{selectedBook.penulis}</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedBook(null)
-                        setBookSearch('')
-                        setFormData({ ...formData, bookId: '' })
-                      }}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Rating */}
-              <div>
-                <label className="text-sm font-medium">Rating *</label>
-                <div className="mt-3">
-                  {renderStars(formData.rating, true, (rating) =>
-                    setFormData({ ...formData, rating })
-                  )}
-                  <p className="text-sm text-gray-600 mt-2">
-                    {formData.rating}/5 Bintang
-                  </p>
-                </div>
-              </div>
-
-              {/* Ulasan */}
-              <div>
-                <label className="text-sm font-medium">Ulasan *</label>
-                <textarea
-                  value={formData.ulasan}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ulasan: e.target.value })
-                  }
-                  placeholder="Bagikan pengalaman Anda membaca buku ini..."
-                  className="w-full mt-2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  rows={4}
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  style={{ backgroundColor: '#1A3D64' }}
-                >
-                  {editingReviewId ? 'Perbarui Review' : 'Kirim Review'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={resetForm}
-                >
-                  Batal
-                </Button>
-              </div>
-            </form>
           </CardContent>
         </Card>
 
@@ -367,9 +166,11 @@ export default function ReviewPage() {
                       {/* Buku Info */}
                       <div className="flex gap-4 flex-1">
                         {review.book.gambar && (
-                          <img
+                          <Image
                             src={review.book.gambar}
                             alt={review.book.judul}
+                            width={64}
+                            height={96}
                             className="w-16 h-24 object-cover rounded border"
                           />
                         )}

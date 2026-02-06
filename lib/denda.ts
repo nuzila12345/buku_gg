@@ -31,9 +31,10 @@ export function hitungDenda(
   const kembali = new Date(kembaliDate)
   kembali.setHours(0, 0, 0, 0)
 
-  // Hitung selisih hari
+  // Hitung selisih hari dengan floor (bukan ceil) untuk akurasi
   const diffTime = kembali.getTime() - jatuhTempo.getTime()
-  const jumlahHariTelat = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)))
+  const diffDays = diffTime / (1000 * 60 * 60 * 24)
+  const jumlahHariTelat = Math.max(0, Math.floor(diffDays + 1)) // +1 untuk menghitung hari pertama
 
   // Hitung total denda
   const totalDenda = jumlahHariTelat * dendaPerHari

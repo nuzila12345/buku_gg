@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
@@ -61,6 +62,7 @@ export default function StatisticsPage() {
 
   useEffect(() => {
     fetchTransactions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchTransactions = async () => {
@@ -332,9 +334,11 @@ export default function StatisticsPage() {
                         {/* Gambar */}
                         {item.gambar && (
                           <div className="flex-shrink-0 hidden sm:block">
-                            <img
+                            <Image
                               src={item.gambar}
                               alt={item.judul}
+                              width={48}
+                              height={64}
                               className="w-12 h-16 object-cover rounded border"
                             />
                           </div>

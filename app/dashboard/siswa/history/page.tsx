@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -43,6 +44,7 @@ export default function HistoryPage() {
 
   useEffect(() => {
     filterTransactions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, transactions])
 
   const fetchTransactions = async () => {
@@ -162,7 +164,7 @@ export default function HistoryPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: '#1A3D64' }}>
+          <h1 className="text-3xl font-bold" style={{ color: '#0F766E' }}>
             Riwayat Peminjaman
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -252,28 +254,28 @@ export default function HistoryPage() {
               <Button
                 variant={filterStatus === 'SEMUA' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('SEMUA')}
-                style={filterStatus === 'SEMUA' ? { backgroundColor: '#1A3D64' } : {}}
+                style={filterStatus === 'SEMUA' ? { backgroundColor: '#0F766E' } : {}}
               >
                 Semua ({transactions.length})
               </Button>
               <Button
                 variant={filterStatus === 'DIPINJAM' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('DIPINJAM')}
-                style={filterStatus === 'DIPINJAM' ? { backgroundColor: '#1A3D64' } : {}}
+                style={filterStatus === 'DIPINJAM' ? { backgroundColor: '#0F766E' } : {}}
               >
                 Sedang Dipinjam ({statusDipinjam})
               </Button>
               <Button
                 variant={filterStatus === 'DIKEMBALIKAN' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('DIKEMBALIKAN')}
-                style={filterStatus === 'DIKEMBALIKAN' ? { backgroundColor: '#1A3D64' } : {}}
+                style={filterStatus === 'DIKEMBALIKAN' ? { backgroundColor: '#0F766E' } : {}}
               >
                 Sudah Dikembalikan ({statusDikembalikan})
               </Button>
               <Button
                 variant={filterStatus === 'TERLAMBAT' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('TERLAMBAT')}
-                style={filterStatus === 'TERLAMBAT' ? { backgroundColor: '#1A3D64' } : {}}
+                style={filterStatus === 'TERLAMBAT' ? { backgroundColor: '#0F766E' } : {}}
               >
                 Terlambat ({statusTerlambat})
               </Button>
@@ -312,9 +314,11 @@ export default function HistoryPage() {
                             {/* Gambar */}
                             {transaction.book.gambar && (
                               <div className="hidden sm:block">
-                                <img
+                                <Image
                                   src={transaction.book.gambar}
                                   alt={transaction.book.judul}
+                                  width={64}
+                                  height={96}
                                   className="w-16 h-24 object-cover rounded border"
                                 />
                               </div>

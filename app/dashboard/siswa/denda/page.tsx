@@ -21,7 +21,7 @@ interface Denda {
   jumlahHariTelat: number
   dendaPerHari: number
   totalDenda: number
-  status: 'BELUM_DIBAYAR' | 'SUDAH_DIBAYAR'
+  status: 'BELUM_DIBAYAR' | 'PENDING_KONFIRMASI' | 'SUDAH_DIBAYAR'
   tanggalDibayar: string | null
 }
 
@@ -33,7 +33,7 @@ export default function DendaPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [selectedDenda, setSelectedDenda] = useState<Denda | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'transfer' | 'cash' | 'card'>('transfer')
+  const [paymentMethod, setPaymentMethod] = useState<'cash'>('cash')
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
 
@@ -45,10 +45,12 @@ export default function DendaPage() {
     if (currentUserId) {
       fetchDenda()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUserId])
 
   useEffect(() => {
     filterDenda()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, dendaList])
 
   const fetchUserData = async () => {
@@ -124,13 +126,12 @@ export default function DendaPage() {
 
     setIsProcessing(true)
     try {
-      // Update denda status to SUDAH_DIBAYAR
+      // Ajukan pembayaran denda (status akan menjadi PENDING_KONFIRMASI)
       const res = await fetch(`/api/denda/${selectedDenda.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          status: 'SUDAH_DIBAYAR',
-          tanggalDibayar: new Date().toISOString(),
+          transactionId: selectedDenda.transactionId,
           paymentMethod: paymentMethod,
         }),
       })
@@ -145,7 +146,8 @@ export default function DendaPage() {
           setPaymentSuccess(false)
         }, 2000)
       } else {
-        alert('Gagal memproses pembayaran. Coba lagi.')
+        const errorData = await res.json()
+        alert(errorData.error || 'Gagal memproses pembayaran. Coba lagi.')
       }
     } catch (error) {
       console.error('Error processing payment:', error)
@@ -340,6 +342,14 @@ export default function DendaPage() {
                                     </p>
                                   </div>
                                 </>
+                              ) : denda.status === 'PENDING_KONFIRMASI' ? (
+                                <>
+                                  <Clock className="w-5 h-5 text-amber-600" />
+                                  <div>
+                                    <p className="text-sm font-medium text-amber-600">Menunggu Konfirmasi Admin</p>
+                                    <p className="text-xs text-gray-600">Silakan tunggu konfirmasi pembayaran</p>
+                                  </div>
+                                </>
                               ) : (
                                 <>
                                   <AlertCircle className="w-5 h-5 text-red-600" />
@@ -380,15 +390,20 @@ export default function DendaPage() {
                             </div>
 
                             {/* Action Button */}
-                            {!isSudahDibayar && (
+                            {denda.status === 'BELUM_DIBAYAR' && (
                               <Button
                                 className="w-full"
                                 style={{ backgroundColor: '#1A3D64' }}
                                 onClick={() => handlePaymentClick(denda)}
                               >
                                 <DollarSign className="w-4 h-4 mr-2" />
-                                Bayar Sekarang
+                                Bayar
                               </Button>
+                            )}
+                            {denda.status === 'PENDING_KONFIRMASI' && (
+                              <div className="w-full p-3 bg-amber-50 border border-amber-200 rounded text-center text-sm text-amber-700 font-medium">
+                                Menunggu Konfirmasi Admin
+                              </div>
                             )}
                           </div>
                         </div>
@@ -419,9 +434,12 @@ export default function DendaPage() {
                 {paymentSuccess ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                    <p className="text-lg font-semibold text-green-600">Pembayaran Berhasil!</p>
+                    <p className="text-lg font-semibold text-green-600">Pembayaran Berhasil Diajukan!</p>
                     <p className="text-sm text-gray-600 mt-2">
-                      Denda Anda telah dicatat sebagai terbayar.
+                      Pembayaran Anda sedang menunggu konfirmasi dari admin perpustakaan.
+                    </p>
+                    <p className="text-xs text-gray-500 mt-4">
+                      Silakan tunggu hingga admin mengkonfirmasi pembayaran Anda.
                     </p>
                   </div>
                 ) : (
@@ -450,22 +468,6 @@ export default function DendaPage() {
                     <div className="space-y-3">
                       <label className="block text-sm font-semibold">Metode Pembayaran:</label>
                       <div className="space-y-2">
-                        <label className="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-blue-50" style={{ borderColor: paymentMethod === 'transfer' ? '#1A3D64' : '#e5e7eb', backgroundColor: paymentMethod === 'transfer' ? '#F0F9FF' : 'white' }}>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value="transfer"
-                            checked={paymentMethod === 'transfer'}
-                            onChange={(e) => setPaymentMethod(e.target.value as 'transfer')}
-                            disabled={isProcessing}
-                            className="w-4 h-4"
-                          />
-                          <div>
-                            <p className="font-medium">Transfer Bank</p>
-                            <p className="text-xs text-gray-600">BRI/BCA/Mandiri</p>
-                          </div>
-                        </label>
-
                         <label className="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-blue-50" style={{ borderColor: paymentMethod === 'cash' ? '#1A3D64' : '#e5e7eb', backgroundColor: paymentMethod === 'cash' ? '#F0F9FF' : 'white' }}>
                           <input
                             type="radio"
@@ -481,22 +483,6 @@ export default function DendaPage() {
                             <p className="text-xs text-gray-600">Bayar langsung ke kantor</p>
                           </div>
                         </label>
-
-                        <label className="flex items-center gap-3 p-3 border rounded cursor-pointer hover:bg-blue-50" style={{ borderColor: paymentMethod === 'card' ? '#1A3D64' : '#e5e7eb', backgroundColor: paymentMethod === 'card' ? '#F0F9FF' : 'white' }}>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value="card"
-                            checked={paymentMethod === 'card'}
-                            onChange={(e) => setPaymentMethod(e.target.value as 'card')}
-                            disabled={isProcessing}
-                            className="w-4 h-4"
-                          />
-                          <div>
-                            <p className="font-medium">Kartu Kredit/Debit</p>
-                            <p className="text-xs text-gray-600">Online payment</p>
-                          </div>
-                        </label>
                       </div>
                     </div>
 
@@ -505,11 +491,7 @@ export default function DendaPage() {
                       <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                       <div className="text-sm text-blue-800">
                         <p className="font-medium">
-                          {paymentMethod === 'transfer'
-                            ? 'Transfer ke rekening yang tertera di kantor perpustakaan'
-                            : paymentMethod === 'cash'
-                            ? 'Datang ke kantor perpustakaan untuk membayar'
-                            : 'Gunakan metode pembayaran online'}
+                          Datang ke kantor perpustakaan untuk membayar
                         </p>
                         <p className="text-xs mt-1">
                           Pastikan menyertakan nomor referensi denda saat membayar

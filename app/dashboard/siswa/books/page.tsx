@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, BookOpen, Search } from 'lucide-react';
@@ -140,9 +141,11 @@ export default function BooksPage() {
                 {/* Cover */}
                 <div className="relative bg-gray-200 aspect-square flex items-center justify-center overflow-hidden">
                   {book.gambar ? (
-                    <img
+                    <Image
                       src={book.gambar}
                       alt={book.judul}
+                      width={300}
+                      height={300}
                       className="w-full h-full object-cover"
                     />
                   ) : (

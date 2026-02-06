@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, BookOpen, Download, QrCode } from 'lucide-react';
@@ -108,9 +109,11 @@ export default function BookDetailAdminPage() {
             <div className="md:col-span-1">
               {/* Cover */}
               {book.gambar ? (
-                <img
+                <Image
                   src={book.gambar}
                   alt={book.judul}
+                  width={300}
+                  height={400}
                   className="w-full rounded-lg shadow-md mb-6"
                 />
               ) : (
