@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/admin/reviews - Get all reviews (admin only)
 export async function GET(request: NextRequest) {
   try {

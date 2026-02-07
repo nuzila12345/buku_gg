@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { UserRole } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/members - Get all members (Admin only)
 export async function GET(request: NextRequest) {
   try {

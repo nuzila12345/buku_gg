@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { TransactionStatus } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/transactions/[id] - Get transaction by ID
 export async function GET(
   request: NextRequest,
