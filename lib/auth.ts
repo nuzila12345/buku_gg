@@ -1,6 +1,5 @@
 import { prisma } from './prisma'
 import * as bcrypt from 'bcryptjs'
-import { UserRole } from '@prisma/client'
 
 export interface LoginCredentials {
   username: string
@@ -50,7 +49,7 @@ export async function createUser(data: RegisterData) {
       email: data.email,
       alamat: data.alamat,
       telepon: data.telepon,
-      role: UserRole.SISWA,
+      role: 'SISWA',
     },
   })
 
